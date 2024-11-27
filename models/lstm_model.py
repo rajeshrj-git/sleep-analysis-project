@@ -1,40 +1,43 @@
-# models/lstm_model.py
-
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
 import numpy as np
-import pandas as pd
-import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 
-def preprocess_lstm_data(df, look_back=5):
-    """Preprocess sleep data for LSTM."""
+def prepare_data_for_lstm(df, features, target):
+    X = df[features].values
+    y = df[target].values
+    # Fit scaler only on the target variable (health condition)
     scaler = MinMaxScaler(feature_range=(0, 1))
-    scaled_data = scaler.fit_transform(df[['sleep_hours']])
+    y_scaled = scaler.fit_transform(y.reshape(-1, 1))  # Scaling only target variable
+    X_scaled = X  # X remains unchanged for now
+    X_scaled = np.reshape(X_scaled, (X_scaled.shape[0], X_scaled.shape[1], 1))  # Reshape for LSTM
+    return X_scaled, y_scaled, scaler
 
-    X, y = [], []
-    for i in range(look_back, len(scaled_data)):
-        X.append(scaled_data[i-look_back:i, 0])
-        y.append(scaled_data[i, 0])
 
-    X, y = np.array(X), np.array(y)
-    X = X.reshape(X.shape[0], X.shape[1], 1)  # LSTM input format
-    return X, y, scaler
-
+# Build LSTM model
 def build_lstm_model(input_shape):
-    """Build the LSTM model architecture."""
-    model = tf.keras.Sequential([
-        tf.keras.layers.LSTM(50, return_sequences=True, input_shape=input_shape),
-        tf.keras.layers.LSTM(50, return_sequences=False),
-        tf.keras.layers.Dense(1)
-    ])
+    model = Sequential()
+    model.add(LSTM(units=50, return_sequences=True, input_shape=input_shape))
+    model.add(Dropout(0.2))
+    model.add(LSTM(units=50, return_sequences=False))
+    model.add(Dropout(0.2))
+    model.add(Dense(units=1))
     model.compile(optimizer='adam', loss='mean_squared_error')
     return model
 
-def train_lstm_model(model, X, y, epochs=20, batch_size=16):
-    """Train the LSTM model."""
-    model.fit(X, y, epochs=epochs, batch_size=batch_size)
+# Train the LSTM model
+def train_lstm_model(X, y, model):
+    model.fit(X, y, epochs=50, batch_size=32,verbose = 0)
 
-def forecast_lstm(model, X, scaler):
-    """Forecast sleep hours with the trained LSTM model."""
-    predicted_sleep = model.predict(X[-1].reshape(1, X.shape[1], 1))
-    predicted_sleep = scaler.inverse_transform(predicted_sleep)
-    return predicted_sleep[0][0]
+def predict_health_condition(model, X, scaler):
+    # Predict health condition for each time step
+    predicted_health_condition = model.predict(X)
+
+    # Reshape predicted values to be in the correct shape for inverse transformation
+    predicted_health_condition_reshaped = predicted_health_condition.reshape(-1, 1)
+
+    # Inverse transform the predicted health condition (target variable)
+    predicted_health_condition_original = scaler.inverse_transform(predicted_health_condition_reshaped)
+
+    return predicted_health_condition_original

@@ -1,32 +1,21 @@
-# utils/data_preprocessing.py
-
 import pandas as pd
-import numpy as np
-from scipy.stats import zscore
 import json
+from pandas import json_normalize
 
+# Load data from JSON
+# def load_data(file_path):
+#     return pd.read_json(file_path)
 def load_data(file_path):
-    with open(file_path, 'r') as file:
-        data = json.load(file)
+    with open(file_path, 'r') as f:
+        data = json.load(f)
     
-    # Assuming data['metrics'] contains the actual data you're interested in
-    df = pd.DataFrame(data['metrics'])
+    # Flatten the 'metrics' part of the JSON data
+    df = json_normalize(data['metrics'])
     
-    # Check the DataFrame structure
-    print(df.head())
+    # Optionally, return the full DataFrame with the 'user_id' included if needed
+    df['user_id'] = data['user_id']
+    
     return df
-def clean_data(df):
-    """Handle missing data, outliers, and other preprocessing tasks."""
-    # Fill missing values in sleep_hours with mean
-    df['sleep_hours'].fillna(df['sleep_hours'].mean(), inplace=True)
-
-    # Remove outliers using Z-score (threshold = 3)
-    df['z_score'] = zscore(df['sleep_hours'])
-    df = df[df['z_score'].abs() <= 3]
-    
-    # Return cleaned DataFrame
-    return df
-
-def save_cleaned_data(df, output_file):
-    """Save the cleaned DataFrame to a CSV file."""
-    df.to_csv(output_file, index=False)
+# Save cleaned data
+def save_cleaned_data(df, file_path):
+    df.to_csv(file_path, index=False)
