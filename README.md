@@ -1,34 +1,62 @@
 # Sleep Analysis Project
 
-This project performs sleep analysis based on user data, including metrics like steps, heart rate, sleep hours, and heart rate variability (HRV). It uses ARIMA and LSTM models to forecast sleep trends and detect anomalies. Additionally, the project provides personalized recommendations based on the analysis.
+This project performs sleep data analysis to provide insights into sleep patterns, trends, and recommendations for improving sleep quality. It processes sleep data from raw files, applies machine learning models, and generates predictions and visualizations.
 
-## Features
+## Table of Contents
 
-- **Data Preprocessing**: Cleans and prepares the raw sleep data.
-- **ARIMA Model**: Trains an ARIMA model to forecast sleep hours for the upcoming days.
-- **LSTM Model**: Builds and trains an LSTM model for time series prediction of sleep data.
-- **Anomaly Detection**: Detects anomalies in the sleep data using z-scores.
-- **Recommendations**: Provides personalized recommendations based on the user’s sleep data.
+- [Overview](#overview)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Running the Project](#running-the-project)
+- [File Structure](#file-structure)
+- [Sample Output](#sample-output)
+- [Contributing](#contributing)
+- [License](#license)
 
-## Prerequisites
+## Overview
 
-Make sure you have the following installed on your system:
+The Sleep Analysis Project is a Python-based tool that helps you track and analyze your sleep patterns. The core of the analysis involves:
 
-- Python 3.7 or higher
-- Pip (Python package installer)
+- **Data Preprocessing**: Cleaning and transforming raw sleep data.
+- **Feature Engineering**: Creating relevant features for analysis and predictions.
+- **Trend Analysis**: Identifying sleep trends and offering insights based on historical data.
+- **Machine Learning Models**: Using models like LSTM (Long Short-Term Memory) to predict future sleep patterns and recommend health improvements.
 
-## Installation
+## Requirements
 
-### 1. Clone the Repository
-Clone this repository to your local machine using the following command:
+Ensure you have the following dependencies installed:
+
+- Python 3.x
+- Required Python libraries listed in `requirements.txt`
+
+To install the necessary libraries, run:
 
 ```bash
-git clone https://github.com/yourusername/sleep-analysis-project.git
-
-
-
-### Run the Application
-cd sleep-analysis-project
 pip install -r requirements.txt
-python api/app.py
 
+
+
+1. Clone the repository
+
+git clone https://github.com/rajeshrj-git/sleep-analysis-project.git
+cd sleep-analysis-project
+
+
+2. Install Dependencies
+
+    pip install -r requirements.txt
+
+
+3.Running the Project:
+
+   python run_analysis.py
+
+
+4.Expected Output:
+
+    Average Sleep Duration (Last 7 Days): 7.00 hours
+    General Recommendation: Your average sleep duration is within a healthy range. Maintain consistency for optimal health.
+
+    Sleep Trend Analysis: Your sleep hours are improving over time. Keep up the good work!
+
+    If you maintain this sleep, your health will improve by 18.17% over the next 3 months.
